@@ -1,5 +1,5 @@
 NOVA: AI-Powered Career Intelligence
-N.O.V.A – Navigate • Optimize • Validate • Achieve
+N.O.V.A – Navigate • Optimize • Validate • Achieve -
 Your AI Career Intelligence Platform
 
 🚀 Overview
