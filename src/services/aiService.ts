@@ -183,21 +183,33 @@ class AIService {
     const strengths = [];
     
     if (experience > 5) {
-      strengths.push('Extensive industry experience with proven track record');
+      strengths.push(`${experience}+ years of proven industry experience with demonstrated impact`);
     }
     
     if (skills.length > 5) {
-      strengths.push('Diverse technical skill set across multiple technologies');
+      strengths.push(`Versatile technical foundation spanning ${skills.length} core technologies and frameworks`);
     }
     
-    strengths.push(`Strong foundation in ${targetField.toLowerCase()} fundamentals`);
-    strengths.push('Demonstrated ability to learn and adapt to new technologies');
+    const field = targetField.toLowerCase();
+    if (field.includes('developer') || field.includes('engineer')) {
+      strengths.push('Strong problem-solving abilities with hands-on development experience');
+      strengths.push('Technical architecture understanding and code quality focus');
+    } else if (field.includes('data')) {
+      strengths.push('Analytical mindset with quantitative problem-solving approach');
+      strengths.push('Experience with data interpretation and insight generation');
+    } else if (field.includes('product') || field.includes('manager')) {
+      strengths.push('Strategic thinking with user-focused product development approach');
+      strengths.push('Cross-functional collaboration and stakeholder management experience');
+    } else {
+      strengths.push(`Solid foundation in ${targetField} domain knowledge and best practices`);
+      strengths.push('Adaptable professional with continuous learning mindset');
+    }
     
     if (targetField.toLowerCase().includes('senior') || targetField.toLowerCase().includes('lead')) {
-      strengths.push('Leadership potential and mentoring capabilities');
+      strengths.push('Leadership readiness with mentoring and team guidance capabilities');
     }
 
-    return strengths.slice(0, 4);
+    return strengths.slice(0, 5); // Return up to 5 strengths for comprehensive analysis
   }
 
   async analyzeResume(
