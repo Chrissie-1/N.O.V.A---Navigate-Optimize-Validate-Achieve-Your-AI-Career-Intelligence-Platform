@@ -733,14 +733,13 @@ function App() {
                   </div>
                 </div>
                 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
                   {jobMatches.map((job, index) => (
                     <JobMatchCard
                       key={job.id}
                       job={job}
                       onSave={() => handleJobSave(job.id)}
                       onApply={() => handleJobApply(job.id, job.url)}
-                      delay={index * 0.1}
                     />
                   ))}
                 </div>

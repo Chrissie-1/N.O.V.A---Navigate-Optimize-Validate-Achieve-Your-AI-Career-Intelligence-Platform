@@ -44,10 +44,10 @@ export const JobMatchCard: React.FC<JobMatchCardProps> = ({
   };
 
   return (
-    <div className={`bg-white border-2 border-gray-200 rounded-3xl p-8 hover:shadow-xl hover:border-yellow-200 transition-all duration-300 ${className}`}>
+    <div className={`bg-white border-2 border-gray-200 rounded-3xl p-8 hover:shadow-xl hover:border-yellow-200 transition-all duration-300 h-full flex flex-col ${className}`}>
       {/* Header */}
       <div className="flex items-start justify-between mb-6">
-        <div className="flex-1">
+        <div className="flex-1 min-w-0">
           <h3 className="text-2xl font-bold text-black mb-2">
             {job.jobTitle}
           </h3>
@@ -96,7 +96,7 @@ export const JobMatchCard: React.FC<JobMatchCardProps> = ({
       </div>
 
       {/* Required Skills */}
-      <div className="mb-6">
+      <div className="mb-6 flex-grow">
         <p className="font-bold text-gray-800 mb-3 text-lg">Required Skills:</p>
         <div className="flex flex-wrap gap-3">
           {job.requiredSkills.slice(0, 6).map((skill, index) => (
@@ -123,7 +123,7 @@ export const JobMatchCard: React.FC<JobMatchCardProps> = ({
       </div>
 
       {/* Actions */}
-      <div className="flex items-center justify-between pt-6 border-t-2 border-gray-100">
+      <div className="flex items-center justify-between pt-6 border-t-2 border-gray-100 mt-auto">
         <button
           onClick={() => onApply(job.id, job.applicationUrl)}
           className="flex items-center px-6 py-3 bg-black text-white rounded-2xl font-bold hover:bg-gray-800 transition-colors shadow-lg hover:shadow-xl"
