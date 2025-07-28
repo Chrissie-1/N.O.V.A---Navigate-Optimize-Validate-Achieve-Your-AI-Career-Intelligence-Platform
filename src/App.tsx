@@ -672,16 +672,20 @@ function App() {
                       whileHover={{ scale: 1.1 }}
                       transition={{ type: "spring", stiffness: 400, damping: 17 }}
                     >
-                      <div className="text-6xl font-bold mb-2">{analysis.matchScore}%</div>
-                      <div className="text-xl text-black/70 font-bold">Match Score</div>
+                      <div className="text-5xl font-black mb-3 bg-gradient-to-r from-black to-gray-700 bg-clip-text text-transparent drop-shadow-sm">
+                        {analysis.matchScore}%
+                      </div>
+                      <div className="text-lg text-black/80 font-semibold tracking-wide">Match Score</div>
                     </motion.div>
                     <motion.div 
                       className="text-center"
                       whileHover={{ scale: 1.1 }}
                       transition={{ type: "spring", stiffness: 400, damping: 17 }}
                     >
-                      <div className="text-6xl font-bold mb-2">{jobMatches.length}</div>
-                      <div className="text-xl text-black/70 font-bold">Top Matches</div>
+                      <div className="text-5xl font-black mb-3 bg-gradient-to-r from-black to-gray-700 bg-clip-text text-transparent drop-shadow-sm">
+                        {jobMatches.length}
+                      </div>
+                      <div className="text-lg text-black/80 font-semibold tracking-wide">Top Matches</div>
                     </motion.div>
                   </div>
                 </div>
