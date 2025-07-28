@@ -716,6 +716,38 @@ function App() {
           >
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 to-transparent rounded-3xl blur-xl animate-pulse-slow"></div>
+              <div className="relative bg-white/95 backdrop-blur-sm border border-gray-200/50 rounded-3xl p-16 shadow-4xl ultra-premium-card">
+                <div className="flex items-center justify-between mb-12">
+                  <div className="flex items-center">
+                    <div className="w-14 h-14 bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-2xl flex items-center justify-center mr-4 shadow-glow">
+                      <Target className="w-7 h-7 text-black" />
+                    </div>
+                    <div>
+                      <h3 className="text-3xl font-bold text-black">Top Job Matches</h3>
+                      <p className="text-gray-600 text-lg">Curated opportunities based on your profile</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-3xl font-bold text-yellow-600">{jobMatches.length}</div>
+                    <div className="text-gray-600">Perfect Matches</div>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                  {jobMatches.map((job, index) => (
+                    <JobMatchCard
+                      key={job.id}
+                      job={job}
+                      onSave={() => handleJobSave(job.id)}
+                      onApply={() => handleJobApply(job.id, job.url)}
+                      delay={index * 0.1}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </main>
 
         {/* Toast Notification */}
         <AnimatePresence>
