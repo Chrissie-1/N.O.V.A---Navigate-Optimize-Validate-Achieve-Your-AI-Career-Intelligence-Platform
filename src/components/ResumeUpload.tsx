@@ -86,6 +86,8 @@ const ResumeUpload: React.FC<ResumeUploadProps> = ({
   };
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
+    if (isAnalyzing) return; // Prevent upload during analysis
+    
     const file = acceptedFiles[0];
     if (file) {
       setUploadedFile(file);
@@ -113,10 +115,11 @@ const ResumeUpload: React.FC<ResumeUploadProps> = ({
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx']
     },
     maxFiles: 1,
-    disabled: isAnalyzing
+    disabled: isAnalyzing || extractionStatus === 'extracting'
   });
 
   const removeFile = () => {
+    if (isAnalyzing) return; // Prevent removal during analysis
     setUploadedFile(null);
     setExtractedText('');
     setExtractionStatus('idle');

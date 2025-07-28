@@ -51,9 +51,10 @@ export const ProfessionalHeader: React.FC<ProfessionalHeaderProps> = ({
             {showExportButton && (
               <motion.button
                 onClick={onExport}
+                disabled={!onExport}
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
-                className="flex items-center px-6 py-3 bg-gradient-to-r from-yellow-400 to-yellow-500 text-black rounded-2xl font-bold hover:from-yellow-500 hover:to-yellow-600 transition-all duration-300 shadow-lg hover:shadow-xl"
+                className="flex items-center px-6 py-3 bg-gradient-to-r from-yellow-400 to-yellow-500 text-black rounded-2xl font-bold hover:from-yellow-500 hover:to-yellow-600 transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Download className="w-5 h-5 mr-2" />
                 Export Report
@@ -63,9 +64,10 @@ export const ProfessionalHeader: React.FC<ProfessionalHeaderProps> = ({
             {onGetStarted && (
               <motion.button
                 onClick={onGetStarted}
+                disabled={!onGetStarted}
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
-                className="bg-black text-white px-8 py-3 rounded-2xl font-bold hover:bg-gray-800 transition-all duration-300 shadow-lg hover:shadow-xl"
+                className="bg-black text-white px-8 py-3 rounded-2xl font-bold hover:bg-gray-800 transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Get Started Free
               </motion.button>

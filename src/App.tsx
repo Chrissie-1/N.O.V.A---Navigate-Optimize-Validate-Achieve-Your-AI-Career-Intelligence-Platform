@@ -1,5 +1,5 @@
 import React from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CircularProgressMeter } from './components/CircularProgressMeter';
 import { GapAnalysisCard } from './components/GapAnalysisCard';
@@ -32,6 +32,7 @@ import {
 
 function App() {
   const [currentStep, setCurrentStep] = useState<'landing' | 'setup' | 'analysis' | 'dashboard'>('landing');
+  const [isNavigating, setIsNavigating] = useState(false);
   const [userProfile, setUserProfile] = useState({
     targetField: '',
     targetSalary: 75,
@@ -45,22 +46,59 @@ function App() {
   const [roadmapData, setRoadmapData] = useState<any>(null);
   const [showToast, setShowToast] = useState<{message: string, type: 'success' | 'error'} | null>(null);
 
+  // Prevent automatic navigation during critical operations
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isAnalyzing || isNavigating) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [isAnalyzing, isNavigating]);
+
+  // Prevent back button during analysis
+  useEffect(() => {
+    const handlePopState = (e: PopStateEvent) => {
+      if (isAnalyzing) {
+        e.preventDefault();
+        window.history.pushState(null, '', window.location.href);
+        showNotification('Please wait for analysis to complete', 'error');
+      }
+    };
+
+    if (isAnalyzing) {
+      window.history.pushState(null, '', window.location.href);
+      window.addEventListener('popstate', handlePopState);
+    }
+
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [isAnalyzing]);
+
   const showNotification = (message: string, type: 'success' | 'error') => {
     setShowToast({ message, type });
     setTimeout(() => setShowToast(null), 4000);
   };
 
-  const handleGetStarted = () => {
+  const handleGetStarted = useCallback(() => {
+    if (isNavigating) return;
+    setIsNavigating(true);
     setCurrentStep('setup');
-  };
+    setTimeout(() => setIsNavigating(false), 100);
+  }, [isNavigating]);
 
-  const handleFileUpload = (file: File, text: string) => {
+  const handleFileUpload = useCallback((file: File, text: string) => {
+    if (isAnalyzing || isNavigating) return;
     setUploadedFile(file);
     setExtractedText(text);
     showNotification('Resume uploaded successfully! Fill in your details and click Submit.', 'success');
-  };
+  }, [isAnalyzing, isNavigating]);
 
   const handleSubmitAnalysis = async () => {
+    if (isAnalyzing || isNavigating) return;
+    
     if (!userProfile.targetField.trim()) {
       showNotification('Please enter your target role first', 'error');
       return;
@@ -77,6 +115,7 @@ function App() {
     }
     
     setIsAnalyzing(true);
+    setIsNavigating(true);
     setCurrentStep('analysis');
     
     try {
@@ -121,32 +160,37 @@ function App() {
     } catch (error) {
       console.error('Error processing resume:', error);
       showNotification(`Analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}. Please try again.`, 'error');
-      setCurrentStep('setup');
+      // Don't auto-redirect on error, let user decide
     } finally {
       setIsAnalyzing(false);
+      setIsNavigating(false);
     }
   };
 
-  const handleJobSave = (jobId: string) => {
+  const handleJobSave = useCallback((jobId: string) => {
+    if (isNavigating) return;
     setJobMatches(prev => 
       prev.map(job => 
         job.id === jobId ? { ...job, isSaved: !job.isSaved } : job
       )
     );
-  };
+  }, [isNavigating]);
 
-  const handleJobApply = (jobId: string, url: string) => {
+  const handleJobApply = useCallback((jobId: string, url: string) => {
+    if (isNavigating) return;
     window.open(url, '_blank');
     setJobMatches(prev => 
       prev.map(job => 
         job.id === jobId ? { ...job, isApplied: true } : job
       )
     );
-  };
+  }, [isNavigating]);
 
   const handleExportPDF = async () => {
+    if (isNavigating) return;
     if (!analysis || !roadmapData) return;
     
+    setIsNavigating(true);
     const pdfData = {
       userProfile: {
         name: 'User',
@@ -167,8 +211,23 @@ function App() {
     } catch (error) {
       console.error('Error generating PDF:', error);
       showNotification('Error generating PDF. Please try again.', 'error');
+    } finally {
+      setIsNavigating(false);
     }
   };
+
+  const handleBackNavigation = useCallback(() => {
+    if (isAnalyzing || isNavigating) return;
+    setIsNavigating(true);
+    
+    if (currentStep === 'dashboard') {
+      setCurrentStep('setup');
+    } else if (currentStep === 'setup') {
+      setCurrentStep('landing');
+    }
+    
+    setTimeout(() => setIsNavigating(false), 100);
+  }, [currentStep, isAnalyzing, isNavigating]);
 
   if (currentStep === 'landing') {
     return (
