@@ -370,7 +370,7 @@ function App() {
                     whileHover={{ rotate: 10, scale: 1.1 }}
                     transition={{ type: "spring", stiffness: 400, damping: 17 }}
                   >
-                    <TrendingUp className="w-8 h-8 text-black" />
+                    <p className="text-gray-600 text-lg">Your strategic path to success</p>
                   </motion.div>
                   <div>
                     <h2 className="text-4xl font-bold text-black">Career Goals</h2>
@@ -379,12 +379,12 @@ function App() {
                 </div>
                 
                 <div className="space-y-10">
-                  <div>
-                    <label className="block text-xl font-bold text-gray-800 mb-4">
-                      What role are you targeting?
-                    </label>
-                    <motion.input
-                      type="text"
+                  {roadmapData.phases?.slice(0, 3).map((phase: any, index: number) => (
+                    <div key={index} className="border-l-4 border-yellow-400 pl-8 py-4">
+                      <h4 className="font-bold text-xl text-black mb-4">{phase.phase}</h4>
+                      <ul className="space-y-3">
+                        {phase.goals?.slice(0, 3).map((goal: string, goalIndex: number) => (
+                          <li key={goalIndex} className="text-gray-700 flex items-start text-base">
                       value={userProfile.targetField}
                       onChange={(e) => setUserProfile(prev => ({ ...prev, targetField: e.target.value }))}
                       placeholder="e.g., Senior Full Stack Developer, Data Scientist, Product Manager, DevOps Engineer..."
@@ -706,7 +706,7 @@ function App() {
               className="lg:col-span-2"
             >
               <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 to-transparent rounded-3xl blur-xl animate-pulse-slow"></div>
+                            <span>{goal}</span>
                 <div className="relative bg-white/95 backdrop-blur-sm rounded-3xl shadow-4xl p-12 border border-gray-100 ultra-premium-card">
                   <div className="flex items-center mb-12">
                     <motion.div 
@@ -714,13 +714,14 @@ function App() {
                       whileHover={{ rotate: 10, scale: 1.1 }}
                       transition={{ type: "spring", stiffness: 400, damping: 17 }}
                     >
-                      <Users className="w-8 h-8 text-black" />
+                <div className="mt-12 p-8 bg-gradient-to-r from-yellow-50 to-yellow-100 rounded-3xl border-2 border-yellow-200">
                     </motion.div>
                     <div>
                       <h2 className="text-4xl font-bold text-black">Top Job Matches</h2>
                       <p className="text-gray-600 text-xl">
-                        {jobMatches.length} premium positions matching your profile and salary expectations
-                      </p>
+                      <p className="font-bold text-yellow-800 text-lg">Estimated Score Improvement</p>
+                      <p className="text-3xl font-bold text-yellow-600 mt-2">+{roadmapData.estimatedImprovement}%</p>
+                      <p className="text-yellow-700 text-sm mt-1">Expected completion in {roadmapData.timeline || '6 months'}</p>
                     </div>
                   </div>
                   
@@ -755,7 +756,10 @@ function App() {
                           />
                         </motion.div>
                       ))}
-                    </AnimatePresence>
+                    <div className="text-center">
+                      <Award className="w-16 h-16 text-yellow-500 mx-auto mb-2" />
+                      <p className="text-yellow-700 font-semibold text-sm">Success Rate: {roadmapData.successProbability || 85}%</p>
+                    </div>
                   </div>
                 </div>
               </div>
