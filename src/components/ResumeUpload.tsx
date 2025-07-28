@@ -28,6 +28,9 @@ const ResumeUpload: React.FC<ResumeUploadProps> = ({
         reader.onload = async (e) => {
           try {
             const arrayBuffer = e.target?.result as ArrayBuffer;
+            if (!arrayBuffer) {
+              throw new Error('Failed to read file content');
+            }
             const uint8Array = new Uint8Array(arrayBuffer);
             
             // Convert to string and clean up
@@ -64,7 +67,7 @@ const ResumeUpload: React.FC<ResumeUploadProps> = ({
         // Text file handling
         const reader = new FileReader();
         reader.onload = (e) => {
-          const text = e.target?.result as string;
+          const text = e.target?.result as string || '';
           setExtractionStatus('success');
           resolve(text || 'Text file content extracted successfully.');
         };

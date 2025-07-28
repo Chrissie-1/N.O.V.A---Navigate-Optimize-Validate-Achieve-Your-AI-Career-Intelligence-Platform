@@ -38,6 +38,7 @@ interface RoadmapData {
 }
 
 export const generateRoadmapPDF = async (data: RoadmapData): Promise<void> => {
+  try {
   const pdf = new jsPDF('p', 'mm', 'a4')
   const pageWidth = pdf.internal.pageSize.getWidth()
   const pageHeight = pdf.internal.pageSize.getHeight()
@@ -162,6 +163,7 @@ export const generateRoadmapPDF = async (data: RoadmapData): Promise<void> => {
     pdf.setTextColor(0, 0, 0)
   })
 
+      if (!text) return y;
   // Page 3+: Roadmap
   pdf.addPage()
   currentY = margin
@@ -204,7 +206,7 @@ export const generateRoadmapPDF = async (data: RoadmapData): Promise<void> => {
       pdf.circle(margin + 3, currentY - 2, 1, 'F')
       currentY = addWrappedText(goal, margin + 8, currentY, pageWidth - margin * 2 - 8)
       currentY += 3
-    })
+    pdf.text(`${data.userProfile.name || 'User'}`, pageWidth/2, 120, { align: 'center' })
 
     currentY += 5
 
@@ -212,7 +214,7 @@ export const generateRoadmapPDF = async (data: RoadmapData): Promise<void> => {
     pdf.setFontSize(12)
     pdf.setFont('helvetica', 'bold')
     pdf.text('Action Items:', margin, currentY)
-    currentY += 8
+    (data.roadmap.phases || []).forEach((phase, phaseIndex) => {
 
     phase.actions.forEach(action => {
       if (currentY > pageHeight - 30) {
@@ -235,7 +237,7 @@ export const generateRoadmapPDF = async (data: RoadmapData): Promise<void> => {
       currentY += 5
       pdf.setTextColor(0, 0, 0)
     })
-
+      (phase.goals || []).forEach(goal => {
     currentY += 10
   })
 
@@ -250,11 +252,11 @@ export const generateRoadmapPDF = async (data: RoadmapData): Promise<void> => {
     currentY += 15
 
     data.roadmap.milestones.forEach((milestone, index) => {
-      if (currentY > pageHeight - 30) {
+      (phase.actions || []).forEach(action => {
         pdf.addPage()
-        currentY = margin
+    (data.analysis.gaps || []).forEach((gap, index) => {
       }
-
+    (data.analysis.strengths || []).forEach((strength, index) => {
       pdf.setFillColor(255, 215, 0)
       pdf.circle(margin + 5, currentY - 2, 3, 'F')
       
@@ -264,7 +266,7 @@ export const generateRoadmapPDF = async (data: RoadmapData): Promise<void> => {
       
       pdf.setFontSize(10)
       pdf.setFont('helvetica', 'normal')
-      pdf.setTextColor(100, 100, 100)
+        if (action.resources && action.resources.length > 0) {
       currentY = addWrappedText(`Deadline: ${milestone.deadline} | Impact: ${milestone.scoreImpact}`, margin + 15, currentY, pageWidth - margin * 2 - 15)
       
       currentY += 10
@@ -276,7 +278,7 @@ export const generateRoadmapPDF = async (data: RoadmapData): Promise<void> => {
   pdf.save(`NOVA-Career-Roadmap-${data.userProfile.name.replace(/\s+/g, '-')}.pdf`)
 }
 
-export const exportDashboardToPDF = async (elementId: string, filename: string = 'nova-dashboard.pdf'): Promise<void> => {
+    if (data.roadmap.milestones && data.roadmap.milestones.length > 0) {
   const element = document.getElementById(elementId)
   if (!element) {
     throw new Error('Element not found')
@@ -286,7 +288,7 @@ export const exportDashboardToPDF = async (elementId: string, filename: string =
     scale: 2,
     useCORS: true,
     allowTaint: true,
-    backgroundColor: '#ffffff'
+    currentY = addWrappedText(`Estimated Score Improvement: +${data.roadmap.estimatedImprovement || 0}%`, margin, currentY, pageWidth - margin * 2, 12)
   })
 
   const imgData = canvas.toDataURL('image/png')
@@ -309,5 +311,9 @@ export const exportDashboardToPDF = async (elementId: string, filename: string =
     heightLeft -= pageHeight
   }
 
-  pdf.save(filename)
+    pdf.save(`NOVA-Career-Roadmap-${(data.userProfile.name || 'User').replace(/\s+/g, '-')}.pdf`)
+  } catch (error) {
+    console.error('PDF generation error:', error);
+    throw new Error('Failed to generate PDF report. Please try again.');
+  }
 }

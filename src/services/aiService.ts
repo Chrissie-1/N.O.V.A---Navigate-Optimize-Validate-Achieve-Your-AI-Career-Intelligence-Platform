@@ -55,10 +55,10 @@ class AIService {
     const fieldRelevanceScore = this.calculateFieldRelevance(words, targetField);
     
     // Extract skills based on common keywords
-    const technicalSkills = [];
-    const frameworks = [];
-    const tools = [];
-    const languages = [];
+    const technicalSkills: string[] = [];
+    const frameworks: string[] = [];
+    const tools: string[] = [];
+    const languages: string[] = [];
 
     // Common technical skills
     const techKeywords = ['javascript', 'python', 'java', 'react', 'node', 'sql', 'aws', 'docker', 'kubernetes', 'git'];
@@ -120,7 +120,7 @@ class AIService {
       experienceYears,
       educationLevel: words.some(w => w.includes('master') || w.includes('mba')) ? 'Masters' : 
                      words.some(w => w.includes('bachelor') || w.includes('degree')) ? 'Bachelors' : 'High School',
-      certifications: words.filter(w => w.includes('certified') || w.includes('certification')).slice(0, 3),
+      certifications: words.filter(w => w.includes('certified') || w.includes('certification')).slice(0, 3).map(cert => cert.charAt(0).toUpperCase() + cert.slice(1)),
       matchScore,
       strengths: this.generateStrengths(targetField, technicalSkills, experienceYears),
       gaps: commonGaps,

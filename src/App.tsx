@@ -71,6 +71,11 @@ function App() {
       return;
     }
     
+    if (!extractedText.trim()) {
+      showNotification('Resume content could not be extracted. Please try a different file.', 'error');
+      return;
+    }
+    
     setIsAnalyzing(true);
     setCurrentStep('analysis');
     
@@ -81,6 +86,11 @@ function App() {
         userProfile.targetField,
         userProfile.targetSalary
       );
+      
+      if (!result) {
+        throw new Error('Analysis failed to return results');
+      }
+      
       setAnalysis(result);
       
       // Generate Roadmap
@@ -110,7 +120,7 @@ function App() {
       showNotification('Analysis complete! Your personalized career roadmap is ready.', 'success');
     } catch (error) {
       console.error('Error processing resume:', error);
-      showNotification('Analysis failed. Please try again.', 'error');
+      showNotification(`Analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}. Please try again.`, 'error');
       setCurrentStep('setup');
     } finally {
       setIsAnalyzing(false);
