@@ -621,16 +621,16 @@ function App() {
           </motion.div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-16 mb-20">
-            {/* Enhanced Left Column - Score & Gaps */}
+            {/* Left Column - Score & Analysis */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="lg:col-span-1 space-y-16"
+              className="lg:col-span-2 space-y-20"
             >
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 to-transparent rounded-3xl blur-xl animate-pulse-slow"></div>
-                <div className="relative bg-white/95 backdrop-blur-sm rounded-3xl p-10 shadow-4xl border border-gray-100 ultra-premium-card">
+                <div className="relative bg-white/95 backdrop-blur-sm rounded-3xl p-16 shadow-4xl border border-gray-100 ultra-premium-card">
                   <CircularProgressMeter
                     score={analysis.matchScore}
                     showImprovement={true}
@@ -647,8 +647,15 @@ function App() {
                   <GapAnalysisCard gaps={analysis.gaps} />
                 </div>
               </div>
+            </motion.div>
 
-              {/* Enhanced Roadmap Preview */}
+            {/* Right Column - Career Roadmap */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="lg:col-span-1"
+            >
               {roadmapData && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
@@ -657,7 +664,7 @@ function App() {
                   className="relative"
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 to-transparent rounded-3xl blur-xl animate-pulse-slow"></div>
-                  <div className="relative bg-white/95 backdrop-blur-sm border border-gray-200/50 rounded-3xl p-10 shadow-4xl ultra-premium-card">
+                  <div className="relative bg-white/95 backdrop-blur-sm border border-gray-200/50 rounded-3xl p-16 shadow-4xl ultra-premium-card min-h-[800px]">
                     <div className="flex items-center mb-8">
                       <div className="w-14 h-14 bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-2xl flex items-center justify-center mr-4 shadow-glow">
                         <Calendar className="w-7 h-7 text-black" />
@@ -668,12 +675,12 @@ function App() {
                       </div>
                     </div>
                     
-                    <div className="space-y-6">
-                      {roadmapData.phases?.slice(0, 2).map((phase: any, index: number) => (
+                    <div className="space-y-10">
+                      {roadmapData.phases?.map((phase: any, index: number) => (
                         <div key={index} className="border-l-4 border-yellow-400 pl-6">
                           <h4 className="font-bold text-lg text-black mb-2">{phase.phase}</h4>
-                          <ul className="space-y-2">
-                            {phase.goals?.slice(0, 2).map((goal: string, goalIndex: number) => (
+                          <ul className="space-y-3">
+                            {phase.goals?.slice(0, 3).map((goal: string, goalIndex: number) => (
                               <li key={goalIndex} className="text-gray-600 flex items-start">
                                 <Star className="w-4 h-4 text-yellow-500 mr-2 mt-1 flex-shrink-0" />
                                 <span className="text-sm">{goal}</span>
@@ -689,6 +696,7 @@ function App() {
                         <div>
                           <p className="font-bold text-yellow-800">Estimated Improvement</p>
                           <p className="text-2xl font-bold text-yellow-600">+{roadmapData.estimatedImprovement}%</p>
+                          <p className="text-sm text-yellow-700 mt-1">Success Rate: {roadmapData.successProbability}%</p>
                         </div>
                         <Award className="w-12 h-12 text-yellow-500" />
                       </div>
@@ -697,8 +705,80 @@ function App() {
                 </motion.div>
               )}
             </motion.div>
+          </div>
 
-            {/* Enhanced Right Column - Job Matches */}
+          {/* Full Width Job Matches Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            className="mb-20"
+          >
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 to-transparent rounded-3xl blur-xl animate-pulse-slow"></div>
+              <div className="relative bg-white/95 backdrop-blur-sm rounded-3xl shadow-4xl p-16 border border-gray-100 ultra-premium-card">
+                <div className="flex items-center mb-12">
+                  <motion.div 
+                    className="w-16 h-16 bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-3xl flex items-center justify-center mr-6 shadow-glow"
+                    whileHover={{ rotate: 10, scale: 1.1 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                  >
+                    <Target className="w-8 h-8 text-black" />
+                  </motion.div>
+                  <div>
+                    <h2 className="text-4xl font-bold text-black">Top Job Matches</h2>
+                    <p className="text-gray-600 text-xl">
+                      Curated opportunities based on your profile
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-10">
+                  <AnimatePresence>
+                    {jobMatches.map((job, index) => (
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: index * 0.1 }}
+                        whileHover={{ y: -5, scale: 1.02 }}
+                      >
+                        <JobMatchCard
+                          job={{
+                            id: index.toString(),
+                            jobTitle: job.jobTitle || job.title,
+                            companyName: job.companyName || job.company,
+                            salaryMin: job.salaryMin || job.salary_min,
+                            salaryMax: job.salaryMax || job.salary_max,
+                            location: job.location,
+                            jobType: job.jobType || job.job_type || 'Full-time',
+                            requiredSkills: job.requiredSkills || job.required_skills || [],
+                            jobDescription: job.jobDescription || job.description || '',
+                            applicationUrl: job.applicationUrl || job.apply_url || '#',
+                            matchScore: job.matchScore || Math.floor(Math.random() * 30) + 60,
+                            isSaved: job.isSaved || false,
+                            postedDate: job.postedDate || job.posted_date
+                          }}
+                          onSave={handleJobSave}
+                          onApply={handleJobApply}
+                        />
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </div>
+                
+                <div className="mt-12 p-8 bg-gradient-to-r from-yellow-50 to-yellow-100 rounded-3xl border-2 border-yellow-200">
+                  <div className="text-center">
+                    <Award className="w-16 h-16 text-yellow-500 mx-auto mb-2" />
+                    <p className="font-bold text-yellow-800 text-lg">Estimated Score Improvement</p>
+                    <p className="text-3xl font-bold text-yellow-600 mt-2">+{roadmapData.estimatedImprovement}%</p>
+                    <p className="text-yellow-700 text-sm mt-1">Expected completion in {roadmapData.timeline || '6 months'}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </main>
             <motion.div
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
