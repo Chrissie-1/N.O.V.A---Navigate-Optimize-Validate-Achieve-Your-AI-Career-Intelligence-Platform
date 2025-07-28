@@ -94,14 +94,6 @@ export const LandingPage: React.FC = () => {
                 Start Your Journey
                 <ArrowRight className="w-5 h-5 ml-2" />
               </motion.button>
-              
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="border-2 border-gray-300 text-gray-700 px-8 py-4 rounded-xl font-semibold text-lg hover:border-gray-400 transition-colors"
-              >
-                Watch Demo
-              </motion.button>
             </motion.div>
 
             {/* Stats */}

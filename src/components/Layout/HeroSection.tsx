@@ -71,14 +71,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onGetStarted }) => {
               Start Free Analysis
               <ArrowRight className="w-6 h-6 ml-3" />
             </motion.button>
-            
-            <motion.button
-              whileHover={{ scale: 1.05, y: -5 }}
-              whileTap={{ scale: 0.95 }}
-              className="border-2 border-white/30 text-white px-12 py-6 rounded-2xl font-bold text-xl hover:border-white/50 hover:bg-white/10 transition-all duration-300 backdrop-blur-sm"
-            >
-              Watch Demo
-            </motion.button>
           </motion.div>
 
           {/* Stats */}

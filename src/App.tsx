@@ -404,18 +404,18 @@ function App() {
                       <input
                         type="range"
                         min="10"
-                        max="500"
+                        max="200"
                         value={userProfile.targetSalary}
                         onChange={(e) => setUserProfile(prev => ({ ...prev, targetSalary: parseInt(e.target.value) }))}
                         className="w-full h-6 bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-full appearance-none cursor-pointer professional-slider shadow-lg hover:shadow-xl transition-all"
                         style={{
-                          background: `linear-gradient(to right, #FFD700 0%, #FFD700 ${((userProfile.targetSalary - 10) / 490) * 100}%, #E5E7EB ${((userProfile.targetSalary - 10) / 490) * 100}%, #E5E7EB 100%)`
+                          background: `linear-gradient(to right, #FFD700 0%, #FFD700 ${((userProfile.targetSalary - 10) / 190) * 100}%, #E5E7EB ${((userProfile.targetSalary - 10) / 190) * 100}%, #E5E7EB 100%)`
                         }}
                       />
                       <div className="flex justify-between text-lg text-gray-600 mt-4 font-bold">
                         <span>$10</span>
                         <span className="text-yellow-600">${userProfile.targetSalary}</span>
-                        <span>$500</span>
+                        <span>$200</span>
                       </div>
                     </div>
                   </div>
@@ -471,14 +471,6 @@ function App() {
                 uploadedFile && userProfile.targetField.trim()
                   ? 'bg-gradient-to-r from-yellow-400 to-yellow-500 text-black hover:from-yellow-500 hover:to-yellow-600 hover:shadow-glow-intense'
                   : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-              }`}
-            >
-              <Send className="w-8 h-8 mr-4" />
-              Analyze My Career Potential
-              <Sparkles className="w-8 h-8 ml-4" />
-            </motion.button>
-            
-            {(!uploadedFile || !userProfile.targetField.trim()) && (
               <p className="mt-6 text-gray-500 font-medium text-lg">
                 {!uploadedFile ? '📄 Please upload your resume first' : '🎯 Please enter your target role'}
               </p>
