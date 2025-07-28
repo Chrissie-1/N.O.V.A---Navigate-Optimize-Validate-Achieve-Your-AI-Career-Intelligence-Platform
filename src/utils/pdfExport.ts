@@ -52,8 +52,17 @@ export const generateRoadmapPDF = async (data: RoadmapData): Promise<void> => {
   // Helper function to add text with word wrap
   const addWrappedText = (text: string, x: number, y: number, maxWidth: number, fontSize: number = 10) => {
     if (!text) return y;
+    
+    // Sanitize text to prevent jsPDF errors
+    const sanitizedText = String(text)
+      .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\x9F]/g, '') // Remove non-printable characters
+      .replace(/\s+/g, ' ') // Normalize whitespace
+      .trim();
+    
+    if (!sanitizedText) return y;
+    
     pdf.setFontSize(fontSize)
-    const lines = pdf.splitTextToSize(text, maxWidth)
+    const lines = pdf.splitTextToSize(sanitizedText, maxWidth)
     pdf.text(lines, x, y)
     return y + (lines.length * fontSize * 0.4)
   }
