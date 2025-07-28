@@ -4,11 +4,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { CircularProgressMeter } from './components/CircularProgressMeter';
 import { GapAnalysisCard } from './components/GapAnalysisCard';
 import { DetailedAnalysisCard } from './components/DetailedAnalysisCard';
+import { DataScienceAnalysisCard } from './components/DataScienceAnalysisCard';
 import ResumeUpload from './components/ResumeUpload';
 import { JobMatchCard } from './components/JobMatchCard';
 import { ProfessionalHeader } from './components/Layout/ProfessionalHeader';
 import { HeroSection } from './components/Layout/HeroSection';
 import { aiService, type ResumeAnalysis } from './services/aiService';
+import { dataScienceAnalyzer, type DataScienceAnalysis } from './services/dataScienceAnalyzer';
 import { jobService } from './services/jobService';
 import { generateRoadmapPDF } from './utils/pdfExport';
 import { 
@@ -42,6 +44,7 @@ function App() {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [extractedText, setExtractedText] = useState<string>('');
   const [analysis, setAnalysis] = useState<ResumeAnalysis | null>(null);
+  const [dataScienceAnalysis, setDataScienceAnalysis] = useState<DataScienceAnalysis | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [jobMatches, setJobMatches] = useState<any[]>([]);
   const [roadmapData, setRoadmapData] = useState<any>(null);
@@ -132,6 +135,13 @@ function App() {
       }
       
       setAnalysis(result);
+      
+      // If target field is data science related, run specialized analysis
+      if (userProfile.targetField.toLowerCase().includes('data science') || 
+          userProfile.targetField.toLowerCase().includes('data scientist')) {
+        const dsAnalysis = dataScienceAnalyzer.analyzeResume(extractedText);
+        setDataScienceAnalysis(dsAnalysis);
+      }
       
       // Generate Roadmap
       const roadmap = await aiService.generateRoadmap(
@@ -721,6 +731,16 @@ function App() {
                   <GapAnalysisCard gaps={analysis.gaps} />
                 </div>
               </div>
+              
+              {/* Data Science Specialized Analysis */}
+              {dataScienceAnalysis && (
+                <div className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-purple-400/20 rounded-3xl blur-xl animate-pulse-slow"></div>
+                  <div className="relative">
+                    <DataScienceAnalysisCard analysis={dataScienceAnalysis} />
+                  </div>
+                </div>
+              )}
               
               {/* Detailed Analysis Card */}
               <div className="relative">
