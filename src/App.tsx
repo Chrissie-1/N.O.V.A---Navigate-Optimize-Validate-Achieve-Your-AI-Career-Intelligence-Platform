@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CircularProgressMeter } from './components/CircularProgressMeter';
 import { GapAnalysisCard } from './components/GapAnalysisCard';
+import { DetailedAnalysisCard } from './components/DetailedAnalysisCard';
 import ResumeUpload from './components/ResumeUpload';
 import { JobMatchCard } from './components/JobMatchCard';
 import { ProfessionalHeader } from './components/Layout/ProfessionalHeader';
@@ -718,6 +719,28 @@ function App() {
                 <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 to-transparent rounded-3xl blur-xl animate-pulse-slow"></div>
                 <div className="relative">
                   <GapAnalysisCard gaps={analysis.gaps} />
+                </div>
+              </div>
+              
+              {/* Detailed Analysis Card */}
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 to-transparent rounded-3xl blur-xl animate-pulse-slow"></div>
+                <div className="relative">
+                  <DetailedAnalysisCard 
+                    analysis={{
+                      keyMatchingElements: analysis.keyMatchingElements || [],
+                      majorGaps: analysis.majorGaps || [],
+                      detailedJustification: analysis.detailedJustification || 'Analysis completed successfully.',
+                      roleAlignment: analysis.roleAlignment || {
+                        technicalMatch: 0,
+                        experienceMatch: 0,
+                        industryMatch: 0,
+                        educationMatch: 0
+                      },
+                      matchScore: analysis.matchScore
+                    }}
+                    targetField={userProfile.targetField}
+                  />
                 </div>
               </div>
             </motion.div>

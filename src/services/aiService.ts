@@ -17,6 +17,16 @@ interface ResumeAnalysis {
     description?: string;
   }>;
   marketPosition: string;
+  // Enhanced analysis fields
+  keyMatchingElements: string[];
+  majorGaps: string[];
+  detailedJustification: string;
+  roleAlignment: {
+    technicalMatch: number;
+    experienceMatch: number;
+    industryMatch: number;
+    educationMatch: number;
+  };
 }
 
 interface JobMatch {
@@ -110,6 +120,17 @@ class AIService {
     // Generate relevant gaps based on target field
     const commonGaps = this.generateFieldSpecificGaps(targetField, technicalSkills, frameworks);
 
+    // Generate structured analysis
+    const analysis = this.generateStructuredAnalysis(
+      resumeText, 
+      targetField, 
+      matchScore, 
+      technicalSkills, 
+      frameworks, 
+      tools, 
+      experienceYears,
+      commonGaps
+    );
     return {
       extractedSkills: {
         technical: technicalSkills.length > 0 ? technicalSkills : ['JavaScript', 'HTML', 'CSS'],
@@ -124,10 +145,133 @@ class AIService {
       matchScore,
       strengths: this.generateStrengths(targetField, technicalSkills, experienceYears),
       gaps: commonGaps,
-      marketPosition: matchScore > 80 ? 'Excellent' : matchScore > 60 ? 'Good' : 'Needs Improvement'
+      marketPosition: matchScore > 80 ? 'Excellent' : matchScore > 60 ? 'Good' : 'Needs Improvement',
+      keyMatchingElements: analysis.keyMatchingElements,
+      majorGaps: analysis.majorGaps,
+      detailedJustification: analysis.detailedJustification,
+      roleAlignment: analysis.roleAlignment
     };
   }
 
+  private generateStructuredAnalysis(
+    resumeText: string,
+    targetField: string,
+    matchScore: number,
+    technicalSkills: string[],
+    frameworks: string[],
+    tools: string[],
+    experienceYears: number,
+    gaps: Array<{ skill: string; impact: string; timeToAcquire: string; description?: string }>
+  ) {
+    const words = resumeText.toLowerCase().split(/\s+/);
+    const field = targetField.toLowerCase();
+    
+    // Generate key matching elements
+    const keyMatchingElements: string[] = [];
+    
+    if (technicalSkills.length > 0) {
+      keyMatchingElements.push(`Technical proficiency in ${technicalSkills.slice(0, 3).join(', ')}`);
+    }
+    
+    if (frameworks.length > 0) {
+      keyMatchingElements.push(`Experience with ${frameworks.slice(0, 2).join(' and ')} frameworks`);
+    }
+    
+    if (experienceYears > 2) {
+      keyMatchingElements.push(`${experienceYears} years of relevant industry experience`);
+    }
+    
+    if (words.some(w => w.includes('project') || w.includes('portfolio'))) {
+      keyMatchingElements.push('Demonstrated project experience and practical application');
+    }
+    
+    if (words.some(w => w.includes('degree') || w.includes('bachelor') || w.includes('master'))) {
+      keyMatchingElements.push('Relevant educational background in the field');
+    }
+    
+    // Generate major gaps
+    const majorGaps: string[] = [];
+    
+    if (gaps.length > 0) {
+      gaps.slice(0, 3).forEach(gap => {
+        majorGaps.push(`Missing ${gap.skill} expertise (${gap.impact} impact)`);
+      });
+    }
+    
+    // Add field-specific gaps
+    if (field.includes('data') && !technicalSkills.some(s => s.toLowerCase().includes('python'))) {
+      majorGaps.push('No Python programming experience for data analysis');
+    }
+    
+    if (field.includes('developer') && !technicalSkills.some(s => s.toLowerCase().includes('javascript'))) {
+      majorGaps.push('Limited modern web development framework knowledge');
+    }
+    
+    if (experienceYears < 2 && field.includes('senior')) {
+      majorGaps.push('Insufficient experience level for senior role requirements');
+    }
+    
+    // Generate detailed justification
+    let justification = '';
+    
+    if (matchScore >= 76) {
+      justification = `This resume demonstrates strong alignment with the ${targetField} role requirements. The candidate possesses most of the essential technical skills and relevant experience. Minor gaps exist but can be addressed through targeted skill development.`;
+    } else if (matchScore >= 51) {
+      justification = `The resume shows moderate relevance to the ${targetField} position with several matching qualifications. However, there are notable gaps in key technical areas that would need to be addressed for optimal role fit.`;
+    } else if (matchScore >= 26) {
+      justification = `While the candidate has some transferable skills, the resume shows minimal direct relevance to the ${targetField} role. Significant skill development and experience would be required to meet the position requirements.`;
+    } else {
+      justification = `This resume appears to be from a different field entirely with limited transferable skills to the ${targetField} role. The background and experience do not align with the core requirements of this position.`;
+    }
+    
+    // Calculate role alignment scores
+    const roleAlignment = {
+      technicalMatch: Math.min(100, (technicalSkills.length + frameworks.length) * 15),
+      experienceMatch: Math.min(100, experienceYears * 15),
+      industryMatch: this.calculateIndustryMatch(words, field),
+      educationMatch: this.calculateEducationMatch(words, field)
+    };
+    
+    return {
+      keyMatchingElements: keyMatchingElements.slice(0, 5),
+      majorGaps: majorGaps.slice(0, 5),
+      detailedJustification: justification,
+      roleAlignment
+    };
+  }
+  
+  private calculateIndustryMatch(words: string[], targetField: string): number {
+    const industryKeywords = this.getFieldKeywords(targetField);
+    const matches = industryKeywords.filter(keyword => 
+      words.some(word => word.includes(keyword))
+    ).length;
+    
+    return Math.min(100, (matches / industryKeywords.length) * 100);
+  }
+  
+  private calculateEducationMatch(words: string[], targetField: string): number {
+    const field = targetField.toLowerCase();
+    let score = 50; // Base score
+    
+    if (words.some(w => w.includes('degree') || w.includes('bachelor'))) {
+      score += 25;
+    }
+    
+    if (words.some(w => w.includes('master') || w.includes('mba'))) {
+      score += 25;
+    }
+    
+    // Field-specific education bonuses
+    if (field.includes('engineer') && words.some(w => w.includes('engineering'))) {
+      score += 20;
+    }
+    
+    if (field.includes('data') && words.some(w => w.includes('statistics') || w.includes('mathematics'))) {
+      score += 20;
+    }
+    
+    return Math.min(100, score);
+  }
   private calculateFieldRelevance(resumeWords: string[], targetField: string): number {
     const field = targetField.toLowerCase();
     
@@ -310,16 +454,23 @@ class AIService {
     
     CRITICAL SCORING REQUIREMENT: If this resume shows expertise in a completely different field (e.g., construction/civil engineering for software roles, creative arts for finance, etc.), the match score MUST be below 25.
     
-    First, assess field relevance:
-    - 0-25: Completely irrelevant field (construction resume for data science, etc.)
-    - 26-50: Minimal relevance with some transferable skills  
-    - 51-75: Moderate relevance with several matching qualifications
-    - 76-100: High relevance with strong alignment
+    Provide a comprehensive structured analysis following this exact format:
+    
+    **Relevance Score:** [0-100]
+    
+    **Key Matching Elements:**
+    - [List 3-5 specific skills, experiences, or qualifications that align with the role]
+    
+    **Major Gaps:**
+    - [List 3-5 missing requirements, skills, or experiences]
+    
+    **Justification:**
+    [Write 2-3 sentences explaining the score, highlighting the strongest alignments and most significant gaps]
 
     RESUME:
     ${resumeText}
 
-    Provide a comprehensive analysis in this exact JSON format:
+    Also provide the technical analysis in this JSON format:
     {
       "extractedSkills": {
         "technical": ["list all technical skills found"],
@@ -340,14 +491,30 @@ class AIService {
           "description": "detailed explanation of why this is important for the role"
         }
       ],
-      "marketPosition": "assessment relative to market expectations for this role and salary"
+      "marketPosition": "assessment relative to market expectations for this role and salary",
+      "keyMatchingElements": ["structured list of matching elements"],
+      "majorGaps": ["structured list of major gaps"],
+      "detailedJustification": "comprehensive justification of the score",
+      "roleAlignment": {
+        "technicalMatch": "percentage of technical requirements met",
+        "experienceMatch": "percentage of experience requirements met", 
+        "industryMatch": "percentage of industry knowledge alignment",
+        "educationMatch": "percentage of educational requirements met"
+      }
     }
 
+    Scoring Framework:
+    - 0-25: Irrelevant (completely unrelated field/industry)
+    - 26-50: Minimal relevance (few transferable skills only)
+    - 51-75: Moderate alignment (several matches but notable gaps)
+    - 76-100: Strong alignment (clearly fits job requirements)
+    
     Be extremely thorough and consider:
     1. What does a "${targetField}" role typically require?
     2. Is this resume from a completely different field? (If yes, score below 25)
     3. How does this resume match the role requirements?
     4. How realistic is the $${targetSalary}/hour target for this profile?
+    5. Provide specific, actionable insights in your analysis
     `;
 
     try {
