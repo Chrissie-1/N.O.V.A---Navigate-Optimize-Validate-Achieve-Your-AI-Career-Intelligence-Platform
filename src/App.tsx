@@ -26,7 +26,8 @@ import {
   MapPin,
   DollarSign,
   Calendar,
-  Award
+  Award,
+  AlertCircle
 } from 'lucide-react';
 
 function App() {
@@ -471,6 +472,12 @@ function App() {
                 uploadedFile && userProfile.targetField.trim()
                   ? 'bg-gradient-to-r from-yellow-400 to-yellow-500 text-black hover:from-yellow-500 hover:to-yellow-600 hover:shadow-glow-intense'
                   : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              }`}
+            >
+              <Send className="w-8 h-8 mr-4" />
+              Analyze My Resume
+            </motion.button>
+            {(!uploadedFile || !userProfile.targetField.trim()) && (
               <p className="mt-6 text-gray-500 font-medium text-lg">
                 {!uploadedFile ? '📄 Please upload your resume first' : '🎯 Please enter your target role'}
               </p>
@@ -755,6 +762,17 @@ function App() {
             </motion.div>
           </div>
         </main>
+
+        {/* Toast Notification */}
+        <AnimatePresence>
+          {showToast && (
+            <ToastNotification
+              message={showToast.message}
+              type={showToast.type}
+              onClose={() => setShowToast(null)}
+            />
+          )}
+        </AnimatePresence>
       </div>
     );
   }
