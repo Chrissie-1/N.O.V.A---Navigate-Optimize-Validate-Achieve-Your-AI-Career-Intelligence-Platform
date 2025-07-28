@@ -538,22 +538,80 @@ class AIService {
     targetField: string,
     targetSalary: number
   ): Promise<JobMatch[]> {
-    // Enhanced mock job ranking
-    const mockJobs = jobs.map((job, index) => ({
-      jobTitle: job.title || job.jobTitle || `${targetField} Position`,
-      companyName: job.company || job.companyName || `Company ${index + 1}`,
-      salaryMin: job.salary_min || job.salaryMin || Math.max(30, targetSalary - 20),
-      salaryMax: job.salary_max || job.salaryMax || targetSalary + 20,
-      location: job.location || 'Remote',
-      jobType: job.job_type || job.jobType || 'Full-time',
-      requiredSkills: job.required_skills || job.requiredSkills || userProfile.extractedSkills.technical.slice(0, 4),
-      jobDescription: job.description || job.jobDescription || `Exciting ${targetField} opportunity with growth potential.`,
-      applicationUrl: job.apply_url || job.applicationUrl || '#',
-      matchScore: Math.max(60, Math.min(95, userProfile.matchScore + Math.random() * 20 - 10)),
-      matchReason: `Strong alignment with your ${targetField} background and ${userProfile.experienceYears} years of experience.`
-    }));
+    // Enhanced job ranking with field-specific matching
+    const rankedJobs = jobs.map((job, index) => {
+      // Calculate match score based on skill alignment
+      const skillMatch = this.calculateSkillMatch(job.required_skills || [], userProfile.extractedSkills);
+      const experienceMatch = this.calculateExperienceMatch(job.experience_level, userProfile.experienceYears);
+      const salaryMatch = this.calculateSalaryMatch(job.salary_min, job.salary_max, targetSalary);
+      
+      const overallMatch = Math.round((skillMatch * 0.5 + experienceMatch * 0.3 + salaryMatch * 0.2));
+      
+      return {
+        jobTitle: job.title || job.jobTitle || `${targetField} Position`,
+        companyName: job.company || job.companyName || `Company ${index + 1}`,
+        salaryMin: job.salary_min || job.salaryMin || Math.max(30, targetSalary - 20),
+        salaryMax: job.salary_max || job.salaryMax || targetSalary + 20,
+        location: job.location || 'Remote',
+        jobType: job.job_type || job.jobType || 'Full-time',
+        requiredSkills: job.required_skills || job.requiredSkills || userProfile.extractedSkills.technical.slice(0, 4),
+        jobDescription: job.description || job.jobDescription || `Exciting ${targetField} opportunity with growth potential.`,
+        applicationUrl: job.apply_url || job.applicationUrl || '#',
+        matchScore: Math.max(60, Math.min(95, overallMatch)),
+        matchReason: job.relevance_explanation || `Strong alignment with your ${targetField} background and ${userProfile.experienceYears} years of experience.`
+      };
+    });
 
-    return mockJobs.slice(0, 10);
+    // Sort by match score and return top matches
+    return rankedJobs
+      .sort((a, b) => b.matchScore - a.matchScore)
+      .slice(0, 10);
+  }
+
+  private calculateSkillMatch(jobSkills: string[], userSkills: any): number {
+    if (!jobSkills || jobSkills.length === 0) return 70;
+    
+    const allUserSkills = [
+      ...(userSkills.technical || []),
+      ...(userSkills.frameworks || []),
+      ...(userSkills.tools || [])
+    ].map(skill => skill.toLowerCase());
+    
+    const matchingSkills = jobSkills.filter(skill => 
+      allUserSkills.some(userSkill => 
+        userSkill.includes(skill.toLowerCase()) || skill.toLowerCase().includes(userSkill)
+      )
+    );
+    
+    return Math.min(95, 50 + (matchingSkills.length / jobSkills.length) * 45);
+  }
+
+  private calculateExperienceMatch(jobLevel: string, userYears: number): number {
+    const levelRequirements = {
+      'entry': { min: 0, max: 2 },
+      'mid': { min: 2, max: 5 },
+      'senior': { min: 5, max: 10 },
+      'lead': { min: 8, max: 15 }
+    };
+    
+    const requirement = levelRequirements[jobLevel as keyof typeof levelRequirements] || levelRequirements.mid;
+    
+    if (userYears >= requirement.min && userYears <= requirement.max) return 90;
+    if (userYears >= requirement.min - 1 && userYears <= requirement.max + 2) return 75;
+    return 60;
+  }
+
+  private calculateSalaryMatch(jobMin: number, jobMax: number, targetSalary: number): number {
+    if (!jobMin && !jobMax) return 70;
+    
+    const jobAvg = jobMax ? (jobMin + jobMax) / 2 : jobMin;
+    const difference = Math.abs(jobAvg - targetSalary);
+    const percentDiff = difference / targetSalary;
+    
+    if (percentDiff <= 0.1) return 95; // Within 10%
+    if (percentDiff <= 0.2) return 85; // Within 20%
+    if (percentDiff <= 0.3) return 75; // Within 30%
+    return 60;
   }
 }
 
