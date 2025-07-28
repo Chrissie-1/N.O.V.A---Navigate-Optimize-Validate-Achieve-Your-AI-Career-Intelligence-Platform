@@ -51,6 +51,9 @@ class AIService {
     // Enhanced mock analysis based on resume content and target field
     const words = resumeText.toLowerCase().split(/\s+/);
     
+    // Enhanced field relevance scoring
+    const fieldRelevanceScore = this.calculateFieldRelevance(words, targetField);
+    
     // Extract skills based on common keywords
     const technicalSkills = [];
     const frameworks = [];
@@ -99,9 +102,10 @@ class AIService {
       return acc + (words.filter(word => word.includes(keyword)).length * 10);
     }, 0);
     
-    const baseScore = Math.min(95, Math.max(45, 60 + fieldMatches + (technicalSkills.length * 3)));
+    // Use field relevance as primary factor
+    const baseScore = Math.min(95, Math.max(15, fieldRelevanceScore + fieldMatches + (technicalSkills.length * 2)));
     const salaryAdjustment = targetSalary > 100 ? -10 : targetSalary < 50 ? 10 : 0;
-    const matchScore = Math.max(30, Math.min(95, baseScore + salaryAdjustment));
+    const matchScore = Math.max(15, Math.min(95, baseScore + salaryAdjustment));
 
     // Generate relevant gaps based on target field
     const commonGaps = this.generateFieldSpecificGaps(targetField, technicalSkills, frameworks);
@@ -122,6 +126,83 @@ class AIService {
       gaps: commonGaps,
       marketPosition: matchScore > 80 ? 'Excellent' : matchScore > 60 ? 'Good' : 'Needs Improvement'
     };
+  }
+
+  private calculateFieldRelevance(resumeWords: string[], targetField: string): number {
+    const field = targetField.toLowerCase();
+    
+    // Define field-specific keywords and their weights
+    const fieldKeywords = this.getFieldKeywords(field);
+    const irrelevantFields = this.getIrrelevantFields(field);
+    
+    // Check for completely irrelevant fields (auto low score)
+    const irrelevantMatches = irrelevantFields.reduce((count, irrelevantField) => {
+      return count + resumeWords.filter(word => word.includes(irrelevantField)).length;
+    }, 0);
+    
+    // If resume shows strong expertise in irrelevant field, score below 25
+    if (irrelevantMatches > 5) {
+      return Math.random() * 20 + 5; // 5-25 range
+    }
+    
+    // Calculate relevance based on field-specific keywords
+    const relevantMatches = fieldKeywords.reduce((count, keyword) => {
+      return count + resumeWords.filter(word => word.includes(keyword)).length;
+    }, 0);
+    
+    // Base score calculation
+    if (relevantMatches > 15) return 75 + Math.random() * 20; // 75-95 range
+    if (relevantMatches > 10) return 55 + Math.random() * 20; // 55-75 range  
+    if (relevantMatches > 5) return 35 + Math.random() * 20;  // 35-55 range
+    return 15 + Math.random() * 20; // 15-35 range
+  }
+  
+  private getFieldKeywords(field: string): string[] {
+    const keywordMap: { [key: string]: string[] } = {
+      'data': ['data', 'analytics', 'python', 'sql', 'tableau', 'statistics', 'machine', 'learning', 'pandas', 'numpy', 'visualization'],
+      'software': ['software', 'programming', 'javascript', 'react', 'node', 'java', 'python', 'git', 'api', 'database', 'frontend', 'backend'],
+      'developer': ['developer', 'programming', 'javascript', 'react', 'node', 'java', 'python', 'git', 'api', 'database', 'frontend', 'backend'],
+      'engineer': ['engineer', 'programming', 'javascript', 'react', 'node', 'java', 'python', 'git', 'api', 'database', 'system', 'architecture'],
+      'product': ['product', 'management', 'roadmap', 'agile', 'scrum', 'stakeholder', 'strategy', 'user', 'requirements', 'analytics'],
+      'marketing': ['marketing', 'digital', 'seo', 'content', 'social', 'campaign', 'analytics', 'brand', 'advertising', 'email'],
+      'design': ['design', 'ux', 'ui', 'figma', 'sketch', 'adobe', 'prototype', 'wireframe', 'user', 'interface', 'visual'],
+      'finance': ['finance', 'financial', 'accounting', 'excel', 'modeling', 'budget', 'analysis', 'investment', 'accounting', 'reporting'],
+      'sales': ['sales', 'business', 'development', 'crm', 'salesforce', 'lead', 'negotiation', 'account', 'revenue', 'client']
+    };
+    
+    // Find matching keywords for the field
+    for (const [key, keywords] of Object.entries(keywordMap)) {
+      if (field.includes(key)) {
+        return keywords;
+      }
+    }
+    
+    return field.split(/\s+/); // Fallback to field words
+  }
+  
+  private getIrrelevantFields(targetField: string): string[] {
+    const field = targetField.toLowerCase();
+    
+    const irrelevantMap: { [key: string]: string[] } = {
+      'data': ['construction', 'civil', 'mechanical', 'electrical', 'plumbing', 'carpentry', 'welding', 'painting', 'interior', 'architecture'],
+      'software': ['construction', 'civil', 'mechanical', 'plumbing', 'carpentry', 'welding', 'painting', 'interior', 'chef', 'cooking'],
+      'developer': ['construction', 'civil', 'mechanical', 'plumbing', 'carpentry', 'welding', 'painting', 'interior', 'chef', 'cooking'],
+      'engineer': ['chef', 'cooking', 'painting', 'interior', 'fashion', 'retail', 'hospitality', 'restaurant'],
+      'product': ['construction', 'civil', 'mechanical', 'plumbing', 'carpentry', 'welding', 'chef', 'cooking'],
+      'marketing': ['construction', 'civil', 'mechanical', 'plumbing', 'carpentry', 'welding', 'programming', 'coding'],
+      'design': ['construction', 'civil', 'mechanical', 'plumbing', 'carpentry', 'welding', 'programming', 'coding'],
+      'finance': ['construction', 'civil', 'mechanical', 'plumbing', 'carpentry', 'welding', 'programming', 'coding'],
+      'sales': ['construction', 'civil', 'mechanical', 'plumbing', 'carpentry', 'welding', 'programming', 'coding']
+    };
+    
+    // Find irrelevant fields for the target field
+    for (const [key, irrelevantFields] of Object.entries(irrelevantMap)) {
+      if (field.includes(key)) {
+        return irrelevantFields;
+      }
+    }
+    
+    return []; // No specific irrelevant fields identified
   }
 
   private generateFieldSpecificGaps(targetField: string, currentSkills: string[], frameworks: string[]): Array<{
@@ -227,7 +308,13 @@ class AIService {
     const prompt = `
     You are an expert career analyst. Analyze this resume for a "${targetField}" role targeting $${targetSalary}/hour.
     
-    First, understand what type of role "${targetField}" refers to and what skills, experience, and qualifications are typically required.
+    CRITICAL SCORING REQUIREMENT: If this resume shows expertise in a completely different field (e.g., construction/civil engineering for software roles, creative arts for finance, etc.), the match score MUST be below 25.
+    
+    First, assess field relevance:
+    - 0-25: Completely irrelevant field (construction resume for data science, etc.)
+    - 26-50: Minimal relevance with some transferable skills  
+    - 51-75: Moderate relevance with several matching qualifications
+    - 76-100: High relevance with strong alignment
 
     RESUME:
     ${resumeText}
@@ -256,10 +343,10 @@ class AIService {
       "marketPosition": "assessment relative to market expectations for this role and salary"
     }
 
-    Be extremely thorough and specific. Consider:
+    Be extremely thorough and consider:
     1. What does a "${targetField}" role typically require?
-    2. How does this resume match those requirements?
-    3. What are the most critical gaps for this specific role?
+    2. Is this resume from a completely different field? (If yes, score below 25)
+    3. How does this resume match the role requirements?
     4. How realistic is the $${targetSalary}/hour target for this profile?
     `;
 
