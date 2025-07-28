@@ -71,21 +71,21 @@ class JobService {
     if (isDataRole) {
       jobTemplates = [
         {
-          title: `Senior ${params.field}`,
+          title: `Senior Data Analyst`,
           company: 'DataTech Solutions',
-          description: `We're seeking an experienced ${params.field} to join our analytics team. You'll work with large datasets, build predictive models, and drive data-driven decision making across the organization.`,
+          description: `We're seeking an experienced Data Analyst to join our analytics team. You'll work with large datasets, build predictive models, and drive data-driven decision making across the organization.`,
           required_skills: ['Python', 'SQL', 'Machine Learning', 'Pandas', 'NumPy', 'Tableau', 'AWS'],
           salary_adjustment: 10
         },
         {
-          title: `Lead ${params.field}`,
+          title: `Lead Data Analyst`,
           company: 'AI Innovations Inc',
           description: `Lead our data science initiatives and mentor junior team members. Work on cutting-edge ML projects with real business impact.`,
           required_skills: ['Python', 'TensorFlow', 'PyTorch', 'SQL', 'Docker', 'Kubernetes', 'GCP'],
           salary_adjustment: 20
         },
         {
-          title: `${params.field} - Remote`,
+          title: `Data Analyst - Remote`,
           company: 'Global Analytics Corp',
           description: `Remote opportunity to work with international datasets and build scalable analytics solutions.`,
           required_skills: ['R', 'Python', 'SQL', 'Spark', 'Hadoop', 'Visualization', 'Statistics'],
@@ -95,21 +95,21 @@ class JobService {
     } else if (isDevRole) {
       jobTemplates = [
         {
-          title: `Senior ${params.field}`,
+          title: `Senior Software Engineer`,
           company: 'TechFlow Systems',
           description: `Join our engineering team building scalable web applications. Work with modern technologies and contribute to architecture decisions.`,
           required_skills: ['JavaScript', 'React', 'Node.js', 'TypeScript', 'AWS', 'Docker', 'PostgreSQL'],
           salary_adjustment: 15
         },
         {
-          title: `${params.field} - Full Stack`,
+          title: `Full Stack Developer`,
           company: 'Innovation Labs',
           description: `Full-stack development role working on next-generation SaaS products. Great opportunity for growth and learning.`,
           required_skills: ['React', 'Python', 'Django', 'PostgreSQL', 'Redis', 'Celery', 'AWS'],
           salary_adjustment: 10
         },
         {
-          title: `Lead ${params.field}`,
+          title: `Lead Software Engineer`,
           company: 'Startup Unicorn',
           description: `Lead engineering initiatives at a fast-growing startup. Equity package and opportunity to shape technical direction.`,
           required_skills: ['Microservices', 'Kubernetes', 'Go', 'React', 'PostgreSQL', 'Redis', 'GCP'],
@@ -119,21 +119,21 @@ class JobService {
     } else if (isProductRole) {
       jobTemplates = [
         {
-          title: `Senior ${params.field}`,
+          title: `Senior Product Manager`,
           company: 'Product Excellence Co',
           description: `Drive product strategy and roadmap for our flagship products. Work closely with engineering and design teams.`,
           required_skills: ['Product Strategy', 'Agile', 'Scrum', 'Analytics', 'User Research', 'Roadmapping'],
           salary_adjustment: 12
         },
         {
-          title: `${params.field} - Growth`,
+          title: `Product Manager - Growth`,
           company: 'Scale Ventures',
           description: `Focus on growth initiatives and user acquisition strategies. Data-driven approach to product development.`,
           required_skills: ['Growth Hacking', 'A/B Testing', 'Analytics', 'SQL', 'Product Marketing', 'UX'],
           salary_adjustment: 8
         },
         {
-          title: `Lead ${params.field}`,
+          title: `Lead Product Manager`,
           company: 'Enterprise Solutions',
           description: `Lead product management for enterprise B2B solutions. Strategic role with high impact and visibility.`,
           required_skills: ['B2B Products', 'Enterprise Sales', 'Roadmapping', 'Stakeholder Management', 'Strategy'],
@@ -144,23 +144,23 @@ class JobService {
       // Generic roles
       jobTemplates = [
         {
-          title: `Senior ${params.field}`,
+          title: `Senior Professional`,
           company: 'Professional Services Inc',
-          description: `Exciting opportunity to work in ${params.field} with a growing team and excellent benefits.`,
+          description: `Exciting opportunity to work with a growing team and excellent benefits.`,
           required_skills: ['Communication', 'Problem Solving', 'Leadership', 'Project Management'],
           salary_adjustment: 10
         },
         {
-          title: `${params.field} Specialist`,
+          title: `Industry Specialist`,
           company: 'Industry Leaders LLC',
-          description: `Specialized role focusing on ${params.field} with opportunities for professional development.`,
+          description: `Specialized role with opportunities for professional development.`,
           required_skills: ['Expertise', 'Analysis', 'Strategy', 'Implementation'],
           salary_adjustment: 5
         },
         {
-          title: `Lead ${params.field}`,
+          title: `Team Lead`,
           company: 'Growth Company',
-          description: `Leadership role in ${params.field} with opportunity to build and mentor a team.`,
+          description: `Leadership role with opportunity to build and mentor a team.`,
           required_skills: ['Leadership', 'Strategy', 'Team Building', 'Process Improvement'],
           salary_adjustment: 15
         }

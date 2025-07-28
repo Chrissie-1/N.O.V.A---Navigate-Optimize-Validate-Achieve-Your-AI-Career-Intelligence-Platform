@@ -48,10 +48,10 @@ export const JobMatchCard: React.FC<JobMatchCardProps> = ({
       {/* Header */}
       <div className="flex items-start justify-between mb-6">
         <div className="flex-1 min-w-0">
-          <h3 className="text-2xl font-bold text-black mb-2">
+          <h3 className="text-2xl font-bold text-black mb-2 leading-tight break-words">
             {job.jobTitle}
           </h3>
-          <p className="text-gray-600 font-semibold text-lg">{job.companyName}</p>
+          <p className="text-gray-600 font-semibold text-lg leading-relaxed break-words">{job.companyName}</p>
         </div>
         
         <div className="flex items-center space-x-3">
