@@ -51,6 +51,7 @@ export const generateRoadmapPDF = async (data: RoadmapData): Promise<void> => {
 
   // Helper function to add text with word wrap
   const addWrappedText = (text: string, x: number, y: number, maxWidth: number, fontSize: number = 10) => {
+    if (!text) return y;
     pdf.setFontSize(fontSize)
     const lines = pdf.splitTextToSize(text, maxWidth)
     pdf.text(lines, x, y)
@@ -82,7 +83,7 @@ export const generateRoadmapPDF = async (data: RoadmapData): Promise<void> => {
   // User Info
   pdf.setFontSize(20)
   pdf.setFont('helvetica', 'bold')
-  pdf.text(`${data.userProfile.name}`, pageWidth/2, 120, { align: 'center' })
+  pdf.text(`${data.userProfile.name || 'User'}`, pageWidth/2, 120, { align: 'center' })
   
   pdf.setFontSize(14)
   pdf.setFont('helvetica', 'normal')
@@ -125,7 +126,7 @@ export const generateRoadmapPDF = async (data: RoadmapData): Promise<void> => {
 
   pdf.setFontSize(10)
   pdf.setFont('helvetica', 'normal')
-  data.analysis.strengths.forEach((strength, index) => {
+  (data.analysis.strengths || []).forEach((strength, index) => {
     pdf.setFillColor(255, 215, 0)
     pdf.circle(margin + 3, currentY - 2, 1.5, 'F')
     currentY = addWrappedText(strength, margin + 8, currentY, pageWidth - margin * 2 - 8)
@@ -140,7 +141,7 @@ export const generateRoadmapPDF = async (data: RoadmapData): Promise<void> => {
   pdf.text('Skill Gaps to Address', margin, currentY)
   currentY += 10
 
-  data.analysis.gaps.forEach((gap, index) => {
+  (data.analysis.gaps || []).forEach((gap, index) => {
     if (currentY > pageHeight - 40) {
       pdf.addPage()
       currentY = margin
@@ -163,7 +164,6 @@ export const generateRoadmapPDF = async (data: RoadmapData): Promise<void> => {
     pdf.setTextColor(0, 0, 0)
   })
 
-      if (!text) return y;
   // Page 3+: Roadmap
   pdf.addPage()
   currentY = margin
@@ -175,10 +175,10 @@ export const generateRoadmapPDF = async (data: RoadmapData): Promise<void> => {
 
   pdf.setFontSize(12)
   pdf.setFont('helvetica', 'normal')
-  currentY = addWrappedText(`Estimated Score Improvement: +${data.roadmap.estimatedImprovement}%`, margin, currentY, pageWidth - margin * 2, 12)
+  currentY = addWrappedText(`Estimated Score Improvement: +${data.roadmap.estimatedImprovement || 0}%`, margin, currentY, pageWidth - margin * 2, 12)
   currentY += 15
 
-  data.roadmap.phases.forEach((phase, phaseIndex) => {
+  (data.roadmap.phases || []).forEach((phase, phaseIndex) => {
     if (currentY > pageHeight - 60) {
       pdf.addPage()
       currentY = margin
@@ -201,12 +201,12 @@ export const generateRoadmapPDF = async (data: RoadmapData): Promise<void> => {
 
     pdf.setFontSize(10)
     pdf.setFont('helvetica', 'normal')
-    phase.goals.forEach(goal => {
+    (phase.goals || []).forEach(goal => {
       pdf.setFillColor(0, 0, 0)
       pdf.circle(margin + 3, currentY - 2, 1, 'F')
       currentY = addWrappedText(goal, margin + 8, currentY, pageWidth - margin * 2 - 8)
       currentY += 3
-    pdf.text(`${data.userProfile.name || 'User'}`, pageWidth/2, 120, { align: 'center' })
+    })
 
     currentY += 5
 
@@ -214,9 +214,9 @@ export const generateRoadmapPDF = async (data: RoadmapData): Promise<void> => {
     pdf.setFontSize(12)
     pdf.setFont('helvetica', 'bold')
     pdf.text('Action Items:', margin, currentY)
-    (data.roadmap.phases || []).forEach((phase, phaseIndex) => {
+    currentY += 8
 
-    phase.actions.forEach(action => {
+    (phase.actions || []).forEach(action => {
       if (currentY > pageHeight - 30) {
         pdf.addPage()
         currentY = margin
@@ -230,19 +230,19 @@ export const generateRoadmapPDF = async (data: RoadmapData): Promise<void> => {
       pdf.setTextColor(100, 100, 100)
       currentY = addWrappedText(`  Time: ${action.timeRequired} | Priority: ${action.priority}`, margin, currentY, pageWidth - margin * 2)
       
-      if (action.resources.length > 0) {
+      if (action.resources && action.resources.length > 0) {
         currentY = addWrappedText(`  Resources: ${action.resources.join(', ')}`, margin, currentY, pageWidth - margin * 2)
       }
       
       currentY += 5
       pdf.setTextColor(0, 0, 0)
     })
-      (phase.goals || []).forEach(goal => {
+
     currentY += 10
   })
 
   // Milestones Page
-  if (data.roadmap.milestones.length > 0) {
+  if (data.roadmap.milestones && data.roadmap.milestones.length > 0) {
     pdf.addPage()
     currentY = margin
 
@@ -252,11 +252,11 @@ export const generateRoadmapPDF = async (data: RoadmapData): Promise<void> => {
     currentY += 15
 
     data.roadmap.milestones.forEach((milestone, index) => {
-      (phase.actions || []).forEach(action => {
+      if (currentY > pageHeight - 30) {
         pdf.addPage()
-    (data.analysis.gaps || []).forEach((gap, index) => {
+        currentY = margin
       }
-    (data.analysis.strengths || []).forEach((strength, index) => {
+      
       pdf.setFillColor(255, 215, 0)
       pdf.circle(margin + 5, currentY - 2, 3, 'F')
       
@@ -266,7 +266,7 @@ export const generateRoadmapPDF = async (data: RoadmapData): Promise<void> => {
       
       pdf.setFontSize(10)
       pdf.setFont('helvetica', 'normal')
-        if (action.resources && action.resources.length > 0) {
+      pdf.setTextColor(100, 100, 100)
       currentY = addWrappedText(`Deadline: ${milestone.deadline} | Impact: ${milestone.scoreImpact}`, margin + 15, currentY, pageWidth - margin * 2 - 15)
       
       currentY += 10
@@ -275,43 +275,7 @@ export const generateRoadmapPDF = async (data: RoadmapData): Promise<void> => {
   }
 
   // Save the PDF
-  pdf.save(`NOVA-Career-Roadmap-${data.userProfile.name.replace(/\s+/g, '-')}.pdf`)
-}
-
-    if (data.roadmap.milestones && data.roadmap.milestones.length > 0) {
-  const element = document.getElementById(elementId)
-  if (!element) {
-    throw new Error('Element not found')
-  }
-
-  const canvas = await html2canvas(element, {
-    scale: 2,
-    useCORS: true,
-    allowTaint: true,
-    currentY = addWrappedText(`Estimated Score Improvement: +${data.roadmap.estimatedImprovement || 0}%`, margin, currentY, pageWidth - margin * 2, 12)
-  })
-
-  const imgData = canvas.toDataURL('image/png')
-  const pdf = new jsPDF('p', 'mm', 'a4')
-  
-  const imgWidth = 210
-  const pageHeight = 295
-  const imgHeight = (canvas.height * imgWidth) / canvas.width
-  let heightLeft = imgHeight
-
-  let position = 0
-
-  pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
-  heightLeft -= pageHeight
-
-  while (heightLeft >= 0) {
-    position = heightLeft - imgHeight
-    pdf.addPage()
-    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
-    heightLeft -= pageHeight
-  }
-
-    pdf.save(`NOVA-Career-Roadmap-${(data.userProfile.name || 'User').replace(/\s+/g, '-')}.pdf`)
+  pdf.save(`NOVA-Career-Roadmap-${(data.userProfile.name || 'User').replace(/\s+/g, '-')}.pdf`)
   } catch (error) {
     console.error('PDF generation error:', error);
     throw new Error('Failed to generate PDF report. Please try again.');
