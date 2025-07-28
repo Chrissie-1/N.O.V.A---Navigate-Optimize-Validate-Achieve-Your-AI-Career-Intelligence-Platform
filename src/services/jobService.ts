@@ -71,23 +71,23 @@ class JobService {
     if (isDataRole) {
       jobTemplates = [
         {
-          title: `Senior Data Analyst`,
+          title: 'Senior Data Analyst',
           company: 'DataTech Solutions',
-          description: `We're seeking an experienced Data Analyst to join our analytics team. You'll work with large datasets, build predictive models, and drive data-driven decision making across the organization.`,
+          description: 'Join our analytics team to work with large datasets, build predictive models, and drive data-driven decision making across the organization.',
           required_skills: ['Python', 'SQL', 'Machine Learning', 'Pandas', 'NumPy', 'Tableau', 'AWS'],
           salary_adjustment: 10
         },
         {
-          title: `Lead Data Analyst`,
+          title: 'Lead Data Scientist',
           company: 'AI Innovations Inc',
-          description: `Lead our data science initiatives and mentor junior team members. Work on cutting-edge ML projects with real business impact.`,
+          description: 'Lead data science initiatives and mentor junior team members. Work on cutting-edge ML projects with real business impact.',
           required_skills: ['Python', 'TensorFlow', 'PyTorch', 'SQL', 'Docker', 'Kubernetes', 'GCP'],
           salary_adjustment: 20
         },
         {
-          title: `Data Analyst - Remote`,
+          title: 'Remote Data Analyst',
           company: 'Global Analytics Corp',
-          description: `Remote opportunity to work with international datasets and build scalable analytics solutions.`,
+          description: 'Remote opportunity to work with international datasets and build scalable analytics solutions for global clients.',
           required_skills: ['R', 'Python', 'SQL', 'Spark', 'Hadoop', 'Visualization', 'Statistics'],
           salary_adjustment: 5
         }
@@ -95,23 +95,23 @@ class JobService {
     } else if (isDevRole) {
       jobTemplates = [
         {
-          title: `Senior Software Engineer`,
+          title: 'Senior Software Engineer',
           company: 'TechFlow Systems',
-          description: `Join our engineering team building scalable web applications. Work with modern technologies and contribute to architecture decisions.`,
+          description: 'Join our engineering team building scalable web applications. Work with modern technologies and contribute to architecture decisions.',
           required_skills: ['JavaScript', 'React', 'Node.js', 'TypeScript', 'AWS', 'Docker', 'PostgreSQL'],
           salary_adjustment: 15
         },
         {
-          title: `Full Stack Developer`,
+          title: 'Full Stack Developer',
           company: 'Innovation Labs',
-          description: `Full-stack development role working on next-generation SaaS products. Great opportunity for growth and learning.`,
+          description: 'Full-stack development role working on next-generation SaaS products. Great opportunity for growth and learning.',
           required_skills: ['React', 'Python', 'Django', 'PostgreSQL', 'Redis', 'Celery', 'AWS'],
           salary_adjustment: 10
         },
         {
-          title: `Lead Software Engineer`,
+          title: 'Lead Software Engineer',
           company: 'Startup Unicorn',
-          description: `Lead engineering initiatives at a fast-growing startup. Equity package and opportunity to shape technical direction.`,
+          description: 'Lead engineering initiatives at a fast-growing startup. Equity package and opportunity to shape technical direction.',
           required_skills: ['Microservices', 'Kubernetes', 'Go', 'React', 'PostgreSQL', 'Redis', 'GCP'],
           salary_adjustment: 25
         }
@@ -119,23 +119,23 @@ class JobService {
     } else if (isProductRole) {
       jobTemplates = [
         {
-          title: `Senior Product Manager`,
+          title: 'Senior Product Manager',
           company: 'Product Excellence Co',
-          description: `Drive product strategy and roadmap for our flagship products. Work closely with engineering and design teams.`,
+          description: 'Drive product strategy and roadmap for our flagship products. Work closely with engineering and design teams.',
           required_skills: ['Product Strategy', 'Agile', 'Scrum', 'Analytics', 'User Research', 'Roadmapping'],
           salary_adjustment: 12
         },
         {
-          title: `Product Manager - Growth`,
+          title: 'Growth Product Manager',
           company: 'Scale Ventures',
-          description: `Focus on growth initiatives and user acquisition strategies. Data-driven approach to product development.`,
+          description: 'Focus on growth initiatives and user acquisition strategies. Data-driven approach to product development.',
           required_skills: ['Growth Hacking', 'A/B Testing', 'Analytics', 'SQL', 'Product Marketing', 'UX'],
           salary_adjustment: 8
         },
         {
-          title: `Lead Product Manager`,
+          title: 'Lead Product Manager',
           company: 'Enterprise Solutions',
-          description: `Lead product management for enterprise B2B solutions. Strategic role with high impact and visibility.`,
+          description: 'Lead product management for enterprise B2B solutions. Strategic role with high impact and visibility.',
           required_skills: ['B2B Products', 'Enterprise Sales', 'Roadmapping', 'Stakeholder Management', 'Strategy'],
           salary_adjustment: 18
         }
@@ -144,23 +144,23 @@ class JobService {
       // Generic roles
       jobTemplates = [
         {
-          title: `Senior Professional`,
+          title: 'Senior Professional',
           company: 'Professional Services Inc',
-          description: `Exciting opportunity to work with a growing team and excellent benefits.`,
+          description: 'Exciting opportunity to work with a growing team and excellent benefits.',
           required_skills: ['Communication', 'Problem Solving', 'Leadership', 'Project Management'],
           salary_adjustment: 10
         },
         {
-          title: `Industry Specialist`,
+          title: 'Industry Specialist',
           company: 'Industry Leaders LLC',
-          description: `Specialized role with opportunities for professional development.`,
+          description: 'Specialized role with opportunities for professional development.',
           required_skills: ['Expertise', 'Analysis', 'Strategy', 'Implementation'],
           salary_adjustment: 5
         },
         {
-          title: `Team Lead`,
+          title: 'Team Lead',
           company: 'Growth Company',
-          description: `Leadership role with opportunity to build and mentor a team.`,
+          description: 'Leadership role with opportunity to build and mentor a team.',
           required_skills: ['Leadership', 'Strategy', 'Team Building', 'Process Improvement'],
           salary_adjustment: 15
         }

@@ -1,5 +1,6 @@
 import React from 'react';
-import { MapPin, DollarSign, Clock, ExternalLink, Bookmark, BookmarkCheck } from 'lucide-react';
+import { MapPin, DollarSign, Clock, ExternalLink, Bookmark, BookmarkCheck, Star } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 interface JobMatch {
   id: string;
@@ -31,111 +32,115 @@ export const JobMatchCard: React.FC<JobMatchCardProps> = ({
   className = ""
 }) => {
   const getMatchColor = (score: number) => {
-    if (score >= 80) return 'text-green-600 bg-green-50';
-    if (score >= 60) return 'text-yellow-600 bg-yellow-50';
-    return 'text-red-600 bg-red-50';
+    if (score >= 90) return 'text-green-700 bg-green-50 border-green-200';
+    if (score >= 80) return 'text-blue-700 bg-blue-50 border-blue-200';
+    if (score >= 70) return 'text-yellow-700 bg-yellow-50 border-yellow-200';
+    return 'text-orange-700 bg-orange-50 border-orange-200';
   };
 
   const formatSalary = (min?: number, max?: number) => {
-    if (!min && !max) return 'Salary not specified';
-    if (min && max) return `$${min}-${max}/hour`;
-    if (min) return `$${min}+/hour`;
-    return `Up to $${max}/hour`;
+    if (!min && !max) return 'Competitive';
+    if (min && max) return `$${min}-${max}/hr`;
+    if (min) return `$${min}+/hr`;
+    return `Up to $${max}/hr`;
   };
 
   return (
-    <div className={`bg-white border-2 border-gray-200 rounded-3xl p-8 hover:shadow-xl hover:border-yellow-200 transition-all duration-300 h-full flex flex-col ${className}`}>
-      {/* Header */}
-      <div className="flex items-start justify-between mb-6">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -5, scale: 1.02 }}
+      transition={{ duration: 0.3 }}
+      className={`bg-white border-2 border-gray-100 rounded-2xl p-6 hover:border-yellow-300 hover:shadow-xl transition-all duration-300 h-full flex flex-col ${className}`}
+    >
+      {/* Header with Match Score */}
+      <div className="flex items-start justify-between mb-4">
         <div className="flex-1 min-w-0">
-          <h3 className="text-2xl font-bold text-black mb-2 leading-tight break-words">
+          <h3 className="text-xl font-bold text-gray-900 mb-1 line-clamp-2">
             {job.jobTitle}
           </h3>
-          <p className="text-gray-600 font-semibold text-lg leading-relaxed break-words">{job.companyName}</p>
+          <p className="text-gray-600 font-medium text-base">
+            {job.companyName}
+          </p>
         </div>
         
-        <div className="flex items-center space-x-3">
-          <span className={`px-4 py-2 rounded-2xl text-sm font-bold ${getMatchColor(job.matchScore)}`}>
-            {job.matchScore}% match
+        <div className="flex items-center space-x-2 ml-4">
+          <span className={`px-3 py-1 rounded-full text-sm font-bold border ${getMatchColor(job.matchScore)}`}>
+            {Math.round(job.matchScore)}% match
           </span>
           <button
             onClick={() => onSave(job.id)}
-            className="p-3 hover:bg-gray-100 rounded-2xl transition-colors"
+            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
           >
             {job.isSaved ? (
-              <BookmarkCheck className="w-6 h-6 text-yellow-500" />
+              <BookmarkCheck className="w-5 h-5 text-yellow-500" />
             ) : (
-              <Bookmark className="w-6 h-6 text-gray-400" />
+              <Bookmark className="w-5 h-5 text-gray-400" />
             )}
           </button>
         </div>
       </div>
 
       {/* Job Details */}
-      <div className="flex flex-wrap items-center gap-6 mb-6 text-gray-600">
+      <div className="flex flex-wrap items-center gap-4 mb-4 text-sm text-gray-600">
         <div className="flex items-center">
-          <MapPin className="w-5 h-5 mr-2" />
-          <span className="font-semibold">{job.location}</span>
+          <MapPin className="w-4 h-4 mr-1" />
+          <span>{job.location}</span>
         </div>
         
         <div className="flex items-center">
-          <DollarSign className="w-5 h-5 mr-2" />
+          <DollarSign className="w-4 h-4 mr-1" />
           <span className="font-semibold">{formatSalary(job.salaryMin, job.salaryMax)}</span>
         </div>
         
         <div className="flex items-center">
-          <Clock className="w-5 h-5 mr-2" />
-          <span className="font-semibold">{job.jobType}</span>
+          <Clock className="w-4 h-4 mr-1" />
+          <span>{job.jobType}</span>
         </div>
-        
-        {job.postedDate && (
-          <span className="text-gray-500 font-semibold">
-            Posted {job.postedDate}
-          </span>
-        )}
       </div>
 
-      {/* Required Skills */}
-      <div className="mb-6 flex-grow">
-        <p className="font-bold text-gray-800 mb-3 text-lg">Required Skills:</p>
-        <div className="flex flex-wrap gap-3">
-          {job.requiredSkills.slice(0, 6).map((skill, index) => (
+      {/* Skills */}
+      <div className="mb-4 flex-grow">
+        <p className="text-sm font-semibold text-gray-700 mb-2">Key Skills:</p>
+        <div className="flex flex-wrap gap-2">
+          {job.requiredSkills.slice(0, 4).map((skill, index) => (
             <span
               key={index}
-              className="px-4 py-2 bg-gray-100 text-gray-700 text-sm font-semibold rounded-2xl"
+              className="px-2 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-lg"
             >
               {skill}
             </span>
           ))}
-          {job.requiredSkills.length > 6 && (
-            <span className="px-4 py-2 bg-gray-100 text-gray-500 text-sm font-semibold rounded-2xl">
-              +{job.requiredSkills.length - 6} more
+          {job.requiredSkills.length > 4 && (
+            <span className="px-2 py-1 bg-gray-100 text-gray-500 text-xs font-medium rounded-lg">
+              +{job.requiredSkills.length - 4}
             </span>
           )}
         </div>
       </div>
 
-      {/* Job Description Preview */}
-      <div className="mb-6">
-        <p className="text-gray-700 line-clamp-2 leading-relaxed">
+      {/* Description */}
+      <div className="mb-4">
+        <p className="text-gray-600 text-sm line-clamp-2 leading-relaxed">
           {job.jobDescription}
         </p>
       </div>
 
       {/* Actions */}
-      <div className="flex items-center justify-between pt-6 border-t-2 border-gray-100 mt-auto">
+      <div className="flex items-center justify-between pt-4 border-t border-gray-100 mt-auto">
         <button
           onClick={() => onApply(job.id, job.applicationUrl)}
-          className="flex items-center px-6 py-3 bg-black text-white rounded-2xl font-bold hover:bg-gray-800 transition-colors shadow-lg hover:shadow-xl"
+          className="flex items-center px-4 py-2 bg-black text-white rounded-lg font-semibold hover:bg-gray-800 transition-colors text-sm"
         >
-          <ExternalLink className="w-5 h-5 mr-2" />
+          <ExternalLink className="w-4 h-4 mr-2" />
           Apply Now
         </button>
         
-        <button className="text-gray-600 hover:text-black transition-colors font-semibold">
-          View Details
-        </button>
+        <div className="flex items-center text-yellow-500">
+          <Star className="w-4 h-4 mr-1" />
+          <span className="text-sm font-semibold">Top Match</span>
+        </div>
       </div>
-    </div>
+    </motion.div>
   );
 };

@@ -736,10 +736,10 @@ function App() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
                   {jobMatches.map((job, index) => (
                     <JobMatchCard
-                      key={`${job.id}-${index}`}
+                      key={index}
                       job={job}
                       onSave={() => handleJobSave(job.id)}
-                      onApply={() => handleJobApply(job.id, job.url)}
+                      onApply={() => handleJobApply(job.id, job.applicationUrl)}
                     />
                   ))}
                 </div>
