@@ -11,7 +11,6 @@ import { JobMatchCard } from './components/JobMatchCard';
 import { ProfessionalHeader } from './components/Layout/ProfessionalHeader';
 import { HeroSection } from './components/Layout/HeroSection';
 import { aiService, type ResumeAnalysis } from './services/aiService';
-import { dataScienceAnalyzer, type DataScienceAnalysis } from './services/dataScienceAnalyzer';
 import { positionSpecificAnalyzer, type PositionSpecificAnalysis } from './services/positionSpecificAnalyzer';
 import { jobService } from './services/jobService';
 import { generateRoadmapPDF } from './utils/pdfExport';
