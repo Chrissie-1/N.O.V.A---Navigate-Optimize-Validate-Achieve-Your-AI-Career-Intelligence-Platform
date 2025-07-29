@@ -104,16 +104,14 @@ export const generateRoadmapPDF = async (data: RoadmapData): Promise<void> => {
     const targetSalary = data.userProfile?.targetSalary || 75
     pdf.text(`${targetField} • $${targetSalary}/hour`, pageWidth/2, 130, { align: 'center' })
 
-    // Score Circle
-    pdf.setDrawColor(0, 0, 0)
-    pdf.setLineWidth(3)
-    pdf.circle(pageWidth/2, 160, 25)
-    pdf.setFontSize(24)
+    // Score Display (without circle)
+    pdf.setFontSize(36)
     pdf.setFont('helvetica', 'bold')
     const currentScore = data.userProfile?.currentScore || 0
     pdf.text(`${currentScore}%`, pageWidth/2, 165, { align: 'center' })
-    pdf.setFontSize(10)
-    pdf.text('Current Match Score', pageWidth/2, 175, { align: 'center' })
+    pdf.setFontSize(14)
+    pdf.setFont('helvetica', 'normal')
+    pdf.text('Current Match Score', pageWidth/2, 180, { align: 'center' })
 
     // Date
     pdf.setFontSize(10)
