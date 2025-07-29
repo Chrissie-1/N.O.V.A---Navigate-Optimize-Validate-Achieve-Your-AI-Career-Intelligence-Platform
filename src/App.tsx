@@ -199,29 +199,114 @@ function App() {
 
   const handleExportPDF = async () => {
     if (isNavigating) return;
-    if (!analysis || !roadmapData) return;
+    if (!analysis) {
+      showNotification('No analysis data available for export', 'error');
+      return;
+    }
     
     setIsNavigating(true);
+    
+    // Prepare comprehensive data for PDF export
     const pdfData = {
       userProfile: {
-        name: 'User',
+        name: 'Professional',
         targetField: userProfile.targetField,
         targetSalary: userProfile.targetSalary,
         currentScore: analysis.matchScore
       },
       analysis: {
         strengths: analysis.strengths || [],
-        gaps: analysis.gaps || []
+        gaps: (analysis.gaps || []).map(gap => ({
+          skill: gap.skill || 'Skill Gap',
+          impact: gap.impact || 'Medium',
+          timeToAcquire: gap.timeToAcquire || '2-4 weeks',
+          description: gap.description || 'Important skill to develop for role success'
+        }))
       },
-      roadmap: roadmapData
+      roadmap: roadmapData || {
+        phases: [
+          {
+            phase: 'Phase 1: Foundation Building (Month 1-2)',
+            goals: [
+              'Strengthen core technical skills',
+              'Build relevant project portfolio',
+              'Network with industry professionals'
+            ],
+            actions: [
+              {
+                action: 'Complete relevant online courses and certifications',
+                timeRequired: '4-6 weeks',
+                priority: 'High',
+                resources: ['Online learning platforms', 'Industry documentation', 'Practice projects']
+              }
+            ]
+          },
+          {
+            phase: 'Phase 2: Skill Development (Month 3-4)',
+            goals: [
+              'Apply skills in real-world projects',
+              'Gain practical experience',
+              'Refine technical expertise'
+            ],
+            actions: [
+              {
+                action: 'Build comprehensive portfolio projects',
+                timeRequired: '6-8 weeks',
+                priority: 'High',
+                resources: ['GitHub', 'Portfolio platforms', 'Project ideas', 'Mentorship']
+              }
+            ]
+          },
+          {
+            phase: 'Phase 3: Job Search Preparation (Month 5-6)',
+            goals: [
+              'Optimize resume and LinkedIn profile',
+              'Prepare for technical interviews',
+              'Launch strategic job search'
+            ],
+            actions: [
+              {
+                action: 'Conduct mock interviews and refine pitch',
+                timeRequired: '3-4 weeks',
+                priority: 'High',
+                resources: ['Interview prep platforms', 'Mock interview services', 'Industry contacts']
+              }
+            ]
+          }
+        ],
+        milestones: [
+          {
+            milestone: 'Complete foundational skill development',
+            deadline: 'Week 8',
+            scoreImpact: '+15%'
+          },
+          {
+            milestone: 'Launch portfolio with 3+ projects',
+            deadline: 'Week 16',
+            scoreImpact: '+20%'
+          },
+          {
+            milestone: 'Begin strategic job applications',
+            deadline: 'Week 20',
+            scoreImpact: '+10%'
+          },
+          {
+            milestone: 'Secure target role offer',
+            deadline: 'Week 24',
+            scoreImpact: '+25%'
+          }
+        ],
+        estimatedImprovement: Math.min(45, Math.max(15, 100 - analysis.matchScore)),
+        successProbability: Math.min(95, analysis.matchScore + 35)
+      }
     };
     
     try {
       await generateRoadmapPDF(pdfData);
-      showNotification('PDF report generated successfully!', 'success');
+      showNotification('Career intelligence report downloaded successfully!', 'success');
     } catch (error) {
       console.error('Error generating PDF:', error);
-      showNotification('Error generating PDF. Please try again.', 'error');
+      showNotification('Error generating PDF report. Please try again.', 'error');
     } finally {
       setIsNavigating(false);
     }
